@@ -1,0 +1,84 @@
+{
+  "user": [
+    {
+      "email": "anmol123@gmail.com",
+      "fname": "anmol",
+      "lname": "chaware",
+      "password": "anmol123",
+      "role": "admin",
+      "gender": "male",
+      "contact": 9283567048,
+      "id": 1
+    },
+    {
+      "email": "shekhar@gmail.com",
+      "fname": "shekhar",
+      "lname": "Powar",
+      "password": "Shekhar@71297",
+      "role": "trainer",
+      "gender": "male",
+      "contact": "8668606212",
+      "id": 2
+    }
+  ],
+  "attendenceData": [
+    {
+      "fullname": "anmol",
+      "startTime": "12:00:2",
+      "startLocation": "pune",
+      "endTime": "18:00:00",
+      "endLocation": "pune",
+      "totalTime": "6",
+      "status": "done",
+      "id": 1
+    },
+    {
+      "fullname": " ",
+      "startTime": " ",
+      "startLocation": "pune",
+      "status": " ",
+      "Date": "",
+      "id": 2
+    },
+    {
+      "fullname": "shekhar Powar",
+      "startTime": "10:40:55 PM",
+      "startLocation": "pune",
+      "status": "InProgress",
+      "Date": "11/1/2023",
+      "id": 3
+    },
+    {
+      "fullname": "shekhar Powar",
+      "startTime": "10:40:58 PM",
+      "startLocation": "pune",
+      "status": "InProgress",
+      "Date": "11/1/2023",
+      "id": 4
+    },
+    {
+      "fullname": " ",
+      "startTime": " ",
+      "startLocation": "pune",
+      "status": " ",
+      "Date": "",
+      "id": 5
+    },
+    {
+      "fullname": "anmol chaware",
+      "startTime": "10:53:42 PM",
+      "startLocation": "pune",
+      "status": "InProgress",
+      "Date": "11/1/2023",
+      "id": 6
+    },
+    {
+      "fullname": "anmol chaware",
+      "startTime": "10:53:47 PM",
+      "startLocation": "pune",
+      "status": "InProgress",
+      "Date": "11/1/2023",
+      "id": 7
+    }
+  ]
+}
