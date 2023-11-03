@@ -8,6 +8,7 @@ import Dashboard from './pages/dashboard/Dashboard';
 import PrivateRoute from './component/PrivateRoute';
 import User from './pages/user/container/User';
 import AttendenceData from './pages/record/container/AttendenceData';
+import RecordTable from './component/attendence/RecordTable';
 
 
 function App() {
@@ -19,7 +20,7 @@ function App() {
       <Route path='/' element={<Login />} />
       <Route path='/dashboard' element={<PrivateRoute><Dashboard/></PrivateRoute>}>
       <Route path='user' element={<PrivateRoute><User /></PrivateRoute>} />
-      <Route path='record' element={<PrivateRoute><AttendenceData/></PrivateRoute>}/>
+      <Route path='record' element={<PrivateRoute><RecordTable/></PrivateRoute>}/>
       </Route>
       </Routes>
       </BrowserRouter>

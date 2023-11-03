@@ -7,8 +7,8 @@ export function getAllRecord() {
     return (dispatch) => {
         const url = `${constants.baseURL}/attendenceData`
         Get(url).then(response => {
-            const reversedRecord = response.data.reverse(); // Reverse the array of users
-                dispatch(getRecordSuccess(reversedRecord));
+            // const reversedRecord = response.data.reverse(); // Reverse the array of users
+                dispatch(getRecordSuccess(response.data));
             })
             .catch(error => dispatch(getRecordError(error.response.data)))
     }
@@ -38,7 +38,7 @@ export function addRecordError(payload) {
 }
 
 
-// UPDATE User
+// UPDATE record
 export function updateRecord(data) {
 
     return (dispatch) => {
@@ -54,5 +54,9 @@ export function UpdateRecordSuccess(payload) {
 
 export function UpdateRecordError(payload) {
     return { type: actiontype.UPDATE_ATTENDENCE_RECORD_ERROR, payload }
+}
+
+export function getSingleReocrd(id) {
+    return { type: actiontype.SINGLE_ATTENDENCE_RECORD_SUCCESS, payload: id }//action object
 }
 

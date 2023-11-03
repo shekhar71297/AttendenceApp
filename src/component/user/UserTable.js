@@ -12,10 +12,6 @@ import Box from '@mui/material/Box';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import AddIcon from '@mui/icons-material/Add';
-import Dialog from '@mui/material/Dialog';
-import DialogActions from '@mui/material/DialogActions';
-import DialogContent from '@mui/material/DialogContent';
-import DialogTitle from '@mui/material/DialogTitle';
 import Snackbar from '@mui/material/Snackbar';
 import MuiAlert from '@mui/material/Alert';
 import InputAdornment from '@mui/material/InputAdornment';
@@ -263,6 +259,7 @@ class UserTable extends Component {
       const emailIncludes = data.email && data.email.toLowerCase().includes(searchQuery)
       const roleIncludes = data.role && data.role.toLowerCase().includes(searchQuery)
       const genderIncludes = data.gender && data.gender.toLowerCase().includes(searchQuery)
+     
 
       return fnameIncludes || lnameIncludes || emailIncludes || roleIncludes || genderIncludes
     }

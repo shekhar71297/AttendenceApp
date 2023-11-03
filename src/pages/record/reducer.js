@@ -22,6 +22,7 @@ export default function AttendenceReducer(state = initialstate, action) {
 
             let allrecord = state.allrecord;
             allrecord.push(action.payload);
+            console.log("this is reducer data",allrecord);
             return { ...state, record: {}, allrecord: allrecord };
         }
 
@@ -32,6 +33,13 @@ export default function AttendenceReducer(state = initialstate, action) {
             draft.allrecord[index] = action.payload
             return draft;
 
+        }
+        case constant.SINGLE_ATTENDENCE_RECORD_SUCCESS:{
+           
+            const index =state.allrecord.findIndex(d=>d.id===action.payload);
+            const record=state.allrecord[index];
+            return{...state,record:record};
+            
         }
 
         default:

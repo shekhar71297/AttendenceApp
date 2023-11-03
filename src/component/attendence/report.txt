@@ -1,0 +1,37 @@
+ handleStopWork = (val) => {
+    this.setState({ selectedRecord:val });
+    const currentEndTime = new Date();
+    const formattedEndTime = currentEndTime.toLocaleTimeString();
+    const militime = new Date();
+    const Etime = militime.getMilliseconds();
+    const totalTimeMs = Etime - this.state.sTime;
+
+    let totalTime;
+    if (totalTimeMs < 60000) {
+      totalTime = `${Math.ceil(totalTimeMs / 1000)}s`;
+    } else if (totalTimeMs < 3600000) {
+      totalTime = `${Math.ceil(totalTimeMs / 60000)}m`;
+    } else {
+      totalTime = `${Math.ceil(totalTimeMs / 3600000)}h`;
+    }
+
+    this.setState({ isLoggedIn: false });
+
+    const { id,fullname, startTime, startLocation } = this.state.selectedRecord;
+
+    const updatedRecord = {
+      id,
+      endTime: formattedEndTime,
+      // Calculate end location if needed
+      endLocation: this.state.endLocation, // Replace with the actual calculation
+      totalTime: totalTime,
+      status: "Done",
+      fullname,
+      startTime,
+      startLocation,
+    };
+
+    // Update the record in the state or send the update to your API
+    this.props.updateRecordRequest(updatedRecord);
+  }
+
