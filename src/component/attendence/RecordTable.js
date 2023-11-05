@@ -114,8 +114,7 @@ export class RecordTable extends Component {
                         const time = Date.now();
                         const userName = sessionStorage.getItem("user");
                         const currentDate = new Date();
-                        const formattedDate = `${currentDate.getDate()}/${currentDate.toLocaleString('en-US', { month: 'short' })}`;
-                    
+                        const formattedDate = `${currentDate.getDate()}/${currentDate.toLocaleString('en-US', { month: 'short' })}/${currentDate.getFullYear()}`;
                         this.setState({
                             isLoggedIn: true,
                             sTime: sTime, // Set the sTime to the value already set or the current time
