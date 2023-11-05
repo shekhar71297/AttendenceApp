@@ -36,6 +36,7 @@ export default function userReducer(state = initialState , action){
             return draft;
             
         }
+        
 
         case constant.DELETE_USER_SUCCESS:{
             // const draft = state;

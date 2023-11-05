@@ -8,7 +8,7 @@ export function getAllRecord() {
         const url = `${constants.baseURL}/attendenceData`
         Get(url).then(response => {
             // const reversedRecord = response.data.reverse(); // Reverse the array of users
-                dispatch(getRecordSuccess(response.data));
+                dispatch(getRecordSuccess(response.da));
             })
             .catch(error => dispatch(getRecordError(error.response.data)))
     }

@@ -54,6 +54,7 @@ export function updateUser(data) {
     }
 }
 
+
 export function updateusersuccess(payload) {
     return { type: constant.UPDATE_USER_SUCCESS, payload }//action object
 }

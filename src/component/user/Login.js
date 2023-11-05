@@ -66,6 +66,13 @@ export class Login extends Component {
           if (isAdmin || isTrainer || isCounsellor) {
             sessionStorage.setItem(user.role, "true");
             sessionStorage.setItem("user", `${user.fname} ${user.lname}`);
+             // Check if assignWork is false and set status to offline
+          if (!user.assignWork) {
+            localStorage.setItem("status", "offline"); // or "offline" as needed
+          } else {
+            localStorage.setItem("status", "online"); // or "offline" as needed
+
+          }
             this.handleShowAlert(`${user.role} Login Successfully`, 'success');
 
             setTimeout(() => {
@@ -111,7 +118,9 @@ export class Login extends Component {
     e.preventDefault();
     this.props.initUserRequest();
   }
+  
 
+  
 
   render() {
     return (
@@ -136,7 +145,7 @@ export class Login extends Component {
             <CssBaseline />
             <Box
               sx={{
-                marginTop: 8,
+                marginTop: 15,
                 display: 'flex',
                 flexDirection: 'column',
                 alignItems: 'center',
@@ -220,7 +229,7 @@ export class Login extends Component {
             </Box>
           </Container>
         </ThemeProvider>
-        <Box sx={{ flexGrow: 1, marginTop: 8 }}>
+        <Box sx={{ flexGrow: 1, marginTop: 25 }}>
                 <AppBar position="static">
                   <Toolbar>
                     <IconButton

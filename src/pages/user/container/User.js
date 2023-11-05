@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import UserTable from '../../../component/user/UserTable';
 import * as useraction from '../action'
 import { connect } from 'react-redux';
+import Login from '../../../component/user/Login';
 
 const mapStateToProps = (state) => ({
   allUser: state.userStore.allUser,
@@ -10,7 +11,7 @@ const mapStateToProps = (state) => ({
 
 const mapDispatchToProps = (dispatch) => ({
   initUserRequest: () => dispatch(useraction.getAlluser()),
-  updateUserRequest: (id) => dispatch(useraction.updateUser(id)),
+  updateUserRequest: (data) => dispatch(useraction.updateUser(data)),
   addUserRequest: (data) => dispatch(useraction.addUser(data)),
   deleteUserRequest: (id) => dispatch(useraction.deleteUser(id)),
   getSingleUserRequest: (id) => dispatch(useraction.getSingleuser(id))

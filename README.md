@@ -68,3 +68,21 @@ This section has moved here: [https://facebook.github.io/create-react-app/docs/d
 ### `npm run build` fails to minify
 
 This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+toggleChange = (index, newWorkStatus) => {
+  const { page, rowsPerPage, user } = this.state;
+  // let exams = this.state.exams;
+  const dataindex = page * rowsPerPage + index;
+
+  user[dataindex].assignWork = newWorkStatus
+  // console.log("updated exam", user[dataindex]);
+  this.setState({ user: user, status: newWorkStatus ? "online" : "offline" }, () => {
+    const updatedWork = user[dataindex];
+
+    // Store the updated status in session storage
+    sessionStorage.setItem("status", this.state.status);
+
+
+
+    this.props.updateUserRequest(updatedWork);
+  });
+};

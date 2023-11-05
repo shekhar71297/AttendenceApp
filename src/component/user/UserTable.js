@@ -22,6 +22,7 @@ import * as TablePaginationActions from "../common/TablePagination"
 import SearchIcon from '@mui/icons-material/Search';
 import * as validation from '../../util/Validation';
 import DialogBox from '../common/DialogBox';
+import Switch from '@mui/material/Switch';
 
 
 
@@ -39,8 +40,10 @@ class UserTable extends Component {
       contact: "",
       gender: "",
       email: "",
+      status:"offline",
       page: 0,
       rowsPerPage: 5,
+      
       open: false,
       searchQuery: "",
       isAddUser: true,
@@ -48,6 +51,7 @@ class UserTable extends Component {
       recordToDeleteId: null,
       snackbarOpen: false,
       snackbarMessage: '',
+      assignWork: false,
       errors: {
         fnameError: false,
         lnameError: false,
@@ -64,11 +68,15 @@ class UserTable extends Component {
 
 
   componentDidUpdate(prevProps) {
+    if (prevProps.allUser !== this.props.allUser) {
+            this.setState({ user: this.props.allUser }, () => console.log("updated", this.state.user));
+            // console.log("updated all exam data", this.props.allExam);
+        }
 
     if (prevProps.singleUser !== this.props.singleUser) {
-      const { id, fname, lname, role, password, contact, gender, email } = this.props.singleUser;
+      const { id, fname, lname, role, password, contact, gender, email,assignWork,status } = this.props.singleUser;
       this.setState({
-        id, fname, lname, role, password, contact, gender, email
+        id, fname, lname, role, password, contact, gender, email,assignWork,status
       })
     }
   }
@@ -132,7 +140,7 @@ class UserTable extends Component {
 
     if (id !== null) {
       this.getsinglerecord(id);
-      this.setState({ open: true, isAddUser: false });
+      this.setState({ open: true, isAddUser: false,id: id });
     } else {
       this.setState({ open: true, isAddUser: true });
       this.resetUserFormHandler();
@@ -192,6 +200,7 @@ class UserTable extends Component {
       contact: "",
       gender: "",
       email: "",
+      assignWork:true,
     })
   }
 
@@ -213,6 +222,7 @@ class UserTable extends Component {
       role: this.state.role,
       gender: this.state.gender,
       contact: this.state.contact,
+      assignWork:this.state.assignWork
     };
     if (this.state.isAddUser) {
       this.props.addUserRequest(uobj);
@@ -245,23 +255,40 @@ class UserTable extends Component {
     });
   };
 
+toggleChange = (index, newWorkStatus) => {
+  const { page, rowsPerPage, user } = this.state;
+  // let exams = this.state.exams;
+  const dataindex = page * rowsPerPage + index;
 
+  user[dataindex].assignWork = newWorkStatus
+  // console.log("updated exam", user[dataindex]);
+  this.setState({ user: user }, () => {
+      const updatedWork = user[dataindex];
+      this.props.updateUserRequest(updatedWork);
+  });
+};
+
+  
+
+
+  
   render() {
 
-    const { page, rowsPerPage, searchQuery, fname, open, lname, password, contact, email, gender, role, selectedUserdetail } = this.state;
+    const { page, rowsPerPage, searchQuery, fname, open, lname, password, contact, email, gender, role,status, selectedUserdetail } = this.state;
     const { fnameError, lnameError, emailError, contactError, passwordError } = this.state.errors;
     const isSubmitDisabled = !fname || !lname || !email || !contact || !role || !gender || !password || fnameError || lnameError || emailError || contactError || passwordError;
     const filteredUsers = this.props.allUser && this.props.allUser.filter((data) => {
-
+      // console.log(data);
       const searchQuery = this.state.searchQuery;
       const fnameIncludes = data.fname && data.fname.toLowerCase().includes(searchQuery)
       const lnameIncludes = data.lname && data.lname.toLowerCase().includes(searchQuery)
       const emailIncludes = data.email && data.email.toLowerCase().includes(searchQuery)
       const roleIncludes = data.role && data.role.toLowerCase().includes(searchQuery)
       const genderIncludes = data.gender && data.gender.toLowerCase().includes(searchQuery)
-     
+      const workStatusIncludes = data.status && data.status.toLowerCase().includes(searchQuery)
 
-      return fnameIncludes || lnameIncludes || emailIncludes || roleIncludes || genderIncludes
+
+      return fnameIncludes || lnameIncludes||workStatusIncludes || emailIncludes || roleIncludes || genderIncludes
     }
     );
     return (
@@ -319,8 +346,8 @@ class UserTable extends Component {
                     {/* <TableCell align="center"><Typography component="span" variant="subtitle1" sx={{ fontWeight: 'bold' }}>Last Name</Typography></TableCell> */}
                     <TableCell align="center"><Typography component="span" variant="subtitle1" sx={{ fontWeight: 'bold' }}>Email</Typography></TableCell>
                     <TableCell align="center"><Typography component="span" variant="subtitle1" sx={{ fontWeight: 'bold' }}>Role</Typography></TableCell>
-                    {/* <TableCell align="center"><Typography component="span" variant="subtitle1" sx={{ fontWeight: 'bold' }}>Gender</Typography></TableCell> */}
-                    {/* <TableCell align="center"><Typography component="span" variant="subtitle1" sx={{ fontWeight: 'bold' }}>Contact</Typography></TableCell> */}
+                    <TableCell align="center"><Typography component="span" variant="subtitle1" sx={{ fontWeight: 'bold' }}>Online/Offline</Typography></TableCell>
+                    <TableCell align="center"><Typography component="span" variant="subtitle1" sx={{ fontWeight: 'bold' }}>Status</Typography></TableCell>
                     <TableCell align="center"><Typography component="span" variant="subtitle1" sx={{ fontWeight: 'bold' }}>Action</Typography></TableCell>
                   </TableRow>
                 </TableHead>
@@ -338,15 +365,22 @@ class UserTable extends Component {
 
                     filteredUsers && filteredUsers.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((data, index) => {
                       const currentIndex = page * rowsPerPage + index + 1;
-
+                      const status = data.assignWork ? "online" : "offline";
                       return (<TableRow key={index}>
                         <TableCell component="th" align="center" scope="row">{currentIndex}</TableCell>
                         <TableCell className="tablebody" align="center">{data.fname + "  " + data.lname}</TableCell >
-                        {/* <TableCell className="tablebody" align="center">{data.lname}</TableCell > */}
                         <TableCell className="tablebody" align="center">{data.email}</TableCell>
                         <TableCell className="tablebody" align="center">{data.role}</TableCell>
-                        {/* <TableCell className="tablebody" align="center">{data.gender}</TableCell> */}
-                        {/* <TableCell className="tablebody" align="center">{data.contact}</TableCell> */}
+                        <TableCell align='center'>
+                          <Switch
+                            checked={data.assignWork}
+                            onChange={() => this.toggleChange(index, !data.assignWork)} // Handle toggle changes
+                            inputProps={{ 'aria-label': 'controlled' }}
+                          />
+                          
+                        </TableCell>
+                        <TableCell className="tablebody" align="center">{status}</TableCell >
+            
                         <TableCell className="tablebody" align="center" >
                           <Button onClick={() => this.handleopenDetails(data)}><VisibilityIcon /></Button>
                           <Button onClick={() => (this.handleOpen(data.id))}><EditIcon /></Button>

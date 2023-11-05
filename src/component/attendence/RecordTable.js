@@ -88,68 +88,95 @@ export class RecordTable extends Component {
     }
 
     handleStartWork = () => {
-        // e.preventDefault();
         if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition(
                 (position) => {
-                    // console.log(navigator.geolocation);
-                    // Get latitude and longitude from the geolocation data
                     const latitude = position.coords.latitude;
                     const longitude = position.coords.longitude;
-
-                    // Combine latitude and longitude to create the location string
                     const userLocation = `Lat: ${latitude}, Long: ${longitude}`;
-                    this.fetchLocationDetails(latitude, longitude, (location) => {
-                        this.setState({
-                          startLocation: location, // Update startLocation with the obtained location
+    
+                    // Check if the status in sessionStorage is "offline"
+                    const status = localStorage.getItem('status');
+                    if (status === 'offline' && !this.areCoordinatesValid(latitude, longitude)) {
+                        this.setState({isWorking:false})
+                    }else{
+                        
+                        this.fetchLocationDetails(latitude, longitude, (location) => {
+                            this.setState({
+                                startLocation: location, // Update startLocation with the obtained location
+                            });
                         });
-                      });
-                      
 
-                    const currentTime = new Date();
-                    const formattedTime = currentTime.toLocaleTimeString();
-                    const time = Date.now();
-                    const userName = sessionStorage.getItem("user");
-                    const currentDate = new Date();
-                    const formattedDate = currentDate.toLocaleDateString();
+                        const sTime = this.state.sTime || Date.now();
 
-                    this.setState({
-                        isLoggedIn: true,
-                        sTime: time,
-                    });
-                    this.setState({
-                        snackbarOpen: true,
-                        snackbarMessage: 'User Login Successfully',
-                        severity: "success"
-                    });
+                        const currentTime = new Date();
+                        const formattedTime = currentTime.toLocaleTimeString();
+                        const time = Date.now();
+                        const userName = sessionStorage.getItem("user");
+                        const currentDate = new Date();
+                        const formattedDate = `${currentDate.getDate()}/${currentDate.toLocaleString('en-US', { month: 'short' })}`;
+                    
+                        this.setState({
+                            isLoggedIn: true,
+                            sTime: sTime, // Set the sTime to the value already set or the current time
+                        });
+                        sessionStorage.setItem('isLoggedIn', 'true');
+                    
+                        this.setState({
+                            snackbarOpen: true,
+                            snackbarMessage: 'User Login Successfully',
+                            severity: "success"
+                        });
 
-                    const sobj = {
-                        fullname: userName,
-                        startTime: formattedTime,
-                        startLocation: userLocation, // Update startLocation in the sobj
-                        endTime: "",
-                        endLocation: this.state.endLocation,
-                        totalTime: "",
-                        status: "InProgress",
-                        date: formattedDate,
+                        const sobj = {
+                            fullname: userName,
+                            startTime: formattedTime,
+                            startLocation: userLocation,
+                            endTime: "",
+                            endLocation: this.state.endLocation,
+                            totalTime: "",
+                            status: "InProgress",
+                            date: formattedDate,
+                        };
+                    
+                        axios.post("http://localhost:8889/attendenceData", sobj).then(() => {
+                            this.handleData();
+                        });
 
+                    
                     }
-                    axios.post("http://localhost:8889/attendenceData", sobj).then(() => {
+                }) 
+            }         
+    };
+ 
 
-                    })
+    // Handle case when sTime is already set
+   
+   
 
-                    // Add the new record to the state or send it to your API
 
-                },
-                (error) => {
-                    console.error("Error obtaining user location:", error);
-                }
-            );
+    
+    
+    // Helper function to check if coordinates match default values
+    areCoordinatesValid = (latitude, longitude) => {
+        const lat = latitude;
+        const roundedlat = lat.toFixed(3)
+        const lon = longitude;
+        const roundedlon = lon.toFixed(3)
+        // Define your default latitude and longitude values here
+        const defaultLatitude = 18.527; // Replace with your default latitude
+        const defaultLongitude = 73.969; // Replace with your default longitude
+        
+        console.log(roundedlat);
+        console.log(roundedlon);
+        // Compare the user's coordinates with the default coordinates
+        if (roundedlat == defaultLatitude && roundedlon == defaultLongitude) {
+            return true;
         } else {
-            // Geolocation is not supported
-            this.setState({ isGeolocationAvailable: false });
+            return false;
         }
     };
+    
     updateEmp = () => {
         // Calculate totalTime
         const { sTime } = this.state;
@@ -157,15 +184,27 @@ export class RecordTable extends Component {
         const totalTimeMs = eTime - sTime;
         const currentTime = new Date();
         const formattedTime = currentTime.toLocaleTimeString();
-        let totalTime;
-        if (totalTimeMs!=0) {
-            totalTime = `${Math.ceil(totalTimeMs / 1000)}s`;
-        } else if (totalTimeMs < 3600000) {
-            totalTime = `${Math.ceil(totalTimeMs / 60000)}m`;
+        // Function to format the time in a user-friendly way
+    const formatTime = (milliseconds) => {
+        const totalSeconds = Math.floor(milliseconds / 1000);
+        if (totalSeconds < 60) {
+            return totalSeconds + 's';
+        } else if (totalSeconds < 3600) {
+            const minutes = Math.floor(totalSeconds / 60);
+            const seconds = totalSeconds % 60;
+            return minutes + 'm ' + seconds + 's';
         } else {
-            totalTime = `${Math.ceil(totalTimeMs / 3600000)}h`;
+            const hours = Math.floor(totalSeconds / 3600);
+            const remainingSeconds = totalSeconds % 3600;
+            const minutes = Math.floor(remainingSeconds / 60);
+            return hours + 'h ' + minutes + 'm';
         }
+    };
+
+    // Calculate and format the total time
+    const formattedTotalTime = formatTime(totalTimeMs);
         this.setState({ isLoggedIn: false });
+        sessionStorage.setItem('isLoggedIn', 'false');
         this.setState({
             snackbarOpen: true,
             snackbarMessage: 'Logout successfully',
@@ -189,7 +228,7 @@ export class RecordTable extends Component {
                         startLocation: this.state.startLocation,
                         endTime: formattedTime,
                         endLocation: userLocation, // Updated with latitude and longitude
-                        totalTime: totalTime,
+                        totalTime: formattedTotalTime,
                         status: "Done"
                     };
 
@@ -207,6 +246,8 @@ export class RecordTable extends Component {
             // Geolocation is not supported
             this.setState({ isGeolocationAvailable: false });
         }
+        localStorage.removeItem("status")
+        sessionStorage.removeItem("isLoggedIn")
     }
 
    
@@ -222,8 +263,11 @@ fetchLocationDetails = (latitude, longitude,) => {
         // Extract the location data from the API response
         const results = response.data.results;
         if (results.length > 0) {
-          const formattedAddress = results[0].formatted;
+          const formattedAddress = results[0].components.neighbourhood
+          ;
+
           console.log('User Location:', formattedAddress);
+          console.log(results);
 
           // Do something with the address (e.g., display it to the user)
         }
@@ -237,10 +281,16 @@ fetchLocationDetails = (latitude, longitude,) => {
 }
 
 
-    componentDidMount() {
-        console.log("mount call");
-        this.handleData()
+   componentDidMount() {
+    // Check if isLoggedIn is set in sessionStorage
+    const isLoggedInInStorage = sessionStorage.getItem('isLoggedIn');
+    if (isLoggedInInStorage === 'true') {
+        this.setState({ isLoggedIn: true });
     }
+
+    this.handleData();
+}
+
     componentDidUpdate(prevProps, prevState) {
         // Check if the isLoggedIn state has changed
         if (this.state.isLoggedIn !== prevState.isLoggedIn) {
@@ -272,19 +322,19 @@ fetchLocationDetails = (latitude, longitude,) => {
 
     render() {
         const { searchQuery, page, rowsPerPage, isDeletePopupOpen, selectedRecord, isDetailsPopupOpen, attendenceData } = this.state;
+        console.log(attendenceData);
         const filteredRecord = attendenceData && attendenceData.filter((val) => {
             const searchQuery = this.state.searchQuery;
             const UserNameIncludes = val.fullname && val.fullname.toLowerCase().includes(searchQuery);
             const StartTimeIncludes = val.startTime && val.startTime.toLowerCase().includes(searchQuery);
-            const endTimeIncludes = val.endTime && val.endTime
+            // const endTimeIncludes = val.endTime && val.endTime
             const statusIncludes = val.status && val.status.toLowerCase().includes(searchQuery);
             const StartLocationIncludes = val.startLocation && val.startLocation.toLowerCase().includes(searchQuery);
             const EndLocationIncludes = val.endLocation && val.endLocation.toLowerCase().includes(searchQuery);
-            const TotalTimeIncludes = val.totalTime && val.totalTime;
+            // const TotalTimeIncludes = val.totalTime && val.totalTime;
             const dateIncludes = val.date && val.date.toLowerCase().includes(searchQuery);
 
-            return UserNameIncludes || StartTimeIncludes || endTimeIncludes || StartLocationIncludes || EndLocationIncludes || statusIncludes || TotalTimeIncludes
-                || dateIncludes
+            return UserNameIncludes || StartTimeIncludes  || StartLocationIncludes || EndLocationIncludes || statusIncludes || dateIncludes
         }
         );
         return (
@@ -386,7 +436,7 @@ fetchLocationDetails = (latitude, longitude,) => {
                                             </Grid>
                                         </TableCell>
                                     </TableRow>
-                                    <Button variant="contained" color="primary" sx={{ marginTop: 4 }} size="small" type="button" onClick={() => this.handleStartWork()} disabled={this.state.isLoggedIn}> <LoginIcon /> Login </Button>
+                                    <Button variant="contained" color="primary" sx={{ marginTop: 4 }} size="small" type="button" onClick={() => this.handleStartWork()} disabled={this.state.isLoggedIn || !this.state.isWorking}> <LoginIcon /> Login </Button>
                                     <TableRow>
                                         <TableCell align="center" ><Typography component="span" variant="subtitle1" sx={{ fontWeight: "bold" }}>SrNo</Typography></TableCell>
                                         <TableCell align="center"><Typography component="span" variant="subtitle1" sx={{ fontWeight: "bold" }}>Date</Typography></TableCell>
@@ -403,7 +453,7 @@ fetchLocationDetails = (latitude, longitude,) => {
                                 <TableBody>
                                     {filteredRecord.length === 0 ? (
                                         <TableRow>
-                                            <TableCell align="center">
+                                            <TableCell colSpan={8} align="center">
                                                 <strong style={{ fontSize: "34px" }}>  No data found</strong>
                                             </TableCell>
                                         </TableRow>
