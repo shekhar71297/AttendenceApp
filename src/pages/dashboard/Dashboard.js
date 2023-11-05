@@ -123,7 +123,7 @@ const Dashboard = () => {
   const handleLogout = () => {
   if (isAdminLog || isTrainerLog || isCounsellorLog) {
     const role = isAdminLog ? "admin" : isTrainerLog ? "trainer" : "counsellor";
-    sessionStorage.removeItem("user");
+    localStorage.removeItem("user");
     sessionStorage.removeItem("admin");
     sessionStorage.removeItem("trainer");
     sessionStorage.removeItem("counsellor");
@@ -235,7 +235,7 @@ const Dashboard = () => {
                   >
                     <PiStudentFill />
                   </ListItemIcon>
-                  <ListItemText primary='Student' sx={{ opacity: open ? 1 : 0 }} />
+                  <ListItemText primary='Attendence' sx={{ opacity: open ? 1 : 0 }} />
                 </ListItemButton>
               </ListItem>
             </List>
@@ -254,6 +254,7 @@ const Dashboard = () => {
           setShowAlert(false);
           sessionStorage.removeItem(isAdminLog ? "admin" : isTrainerLog ? "trainer" : "counsellor");
           sessionStorage.removeItem("user");
+          localStorage.removeItem("status");
           navigate("/");
         }}
         title={`Confirmation`}

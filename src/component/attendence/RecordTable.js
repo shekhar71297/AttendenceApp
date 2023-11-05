@@ -150,12 +150,7 @@ export class RecordTable extends Component {
     };
  
 
-    // Handle case when sTime is already set
-   
-   
 
-
-    
     
     // Helper function to check if coordinates match default values
     areCoordinatesValid = (latitude, longitude) => {
@@ -246,7 +241,7 @@ export class RecordTable extends Component {
             // Geolocation is not supported
             this.setState({ isGeolocationAvailable: false });
         }
-        localStorage.removeItem("status")
+        
         sessionStorage.removeItem("isLoggedIn")
     }
 
